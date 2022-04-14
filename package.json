@@ -1,0 +1,35 @@
+{
+  "name": "collection-events-discord-webhook",
+  "version": "1.0.0",
+  "description": "A sample repo showing how a developer using the OpenSea Firehose API might be able to connect a Discord webhook to send messages whenever new events occur for a collection",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/src/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/src/index.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProjectOpenSea/collection-events-discord-webhook.git"
+  },
+  "author": "Michael Cohen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ProjectOpenSea/collection-events-discord-webhook/issues"
+  },
+  "homepage": "https://github.com/ProjectOpenSea/collection-events-discord-webhook#readme",
+  "dependencies": {
+    "@opensea/pushed-updates-sdk": "file:local-dependencies/pushed-updates-sdk",
+    "discord.js": "^13.6.0",
+    "express": "^4.17.3",
+    "ws": "^8.5.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.24",
+    "concurrently": "^7.1.0",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.6.3"
+  }
+}
