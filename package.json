@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ProjectOpenSea/collection-events-discord-webhook#readme",
   "dependencies": {
-    "@opensea/pushed-updates-sdk": "file:local-dependencies/pushed-updates-sdk",
+    "@opensea/pushed-updates-sdk": "^0.0.1",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
