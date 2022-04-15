@@ -1,0 +1,3 @@
+[submodule "local-dependencies/pushed-updates-sdk"]
+	path = local-dependencies/pushed-updates-sdk
+	url = https://github.com/ProjectOpenSea/pushed-updates-sdk
