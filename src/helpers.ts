@@ -47,14 +47,9 @@ export function getMessage(item: Item, collection: string, event_type: string, t
 const formatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',
-  
-	// These options are needed to round to whole numbers if that's what you want.
-	//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-	//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
   });
   
 function priceCalc(base_price: number, decimals: number, usd_price: string): string {
-	console.log(base_price, decimals, usd_price);
 	return formatter.format((base_price / Math.pow(10, decimals)) * parseFloat(usd_price));
 }
 
@@ -93,5 +88,5 @@ function buildMessageItemReceivedOffer(item: Item, payload: ItemReceivedOfferEve
 function buildMessageItemReceivedBid(item: Item, payload: ItemReceivedBidEventPayload): string {
 	const price = priceCalc(payload.base_price, payload.payment_token.decimals, payload.payment_token.usd_price);
 	const quantity_extension = payload.quantity > 1 ? ` for ${payload.quantity} items` : '';
-	return `Owner ${payload.taker.address} of Token #${item.token_id} received a bid for ${price} from ${payload.maker.address} ${quantity_extension}`;
+	return `Token #${item.token_id} received a bid for ${price} from ${payload.maker.address} ${quantity_extension}`;
 }
