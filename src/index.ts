@@ -10,7 +10,7 @@ dotenv.config();
 const port = parseInt(process.env.PORT || '8080');
 const webhookId = process.env.WEBHOOK_ID || "";
 const webhookToken = process.env.WEBHOOK_TOKEN || "";
-const openseaApiKey = process.env.OPENSEA_API_TOKEN || "";
+const openseaApiToken = process.env.OPENSEA_API_TOKEN || "";
 const openseaApiUrl = process.env.OPENSEA_API_URL || "";
 
 // Discord Webhook Client
@@ -18,7 +18,7 @@ const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
 
 // OpenSea Push Client
 const openseaClient = new OpenSeaPushClient({
-    token: openseaApiKey,
+    token: openseaApiToken,
     apiUrl: openseaApiUrl,
     connectOptions: {
       transport: WebSocket
@@ -34,7 +34,8 @@ app.get("/", (req: express.Request, res: express.Response) => {
 
 const allEvents = Object.values(EventType);
 app.listen( port, () => {
-	openseaClient.onEvents('doodles-official', allEvents, (event) => {
+	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
+		console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Doodles", event.item))
 			.setDescription(getMessage(event.item, "Doodles", event.event_type, event.timestamp, event.payload))
@@ -47,7 +48,8 @@ app.listen( port, () => {
 		});
 	});
 
-	openseaClient.onEvents('neon-district-season-one-item', allEvents, (event) => {
+	openseaClient.onEvents('neon-district-season-one-item', allEvents, (event: any) => {
+		console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Neon District", event.item))
 			.setDescription(getMessage(event.item, "Neon District", event.event_type, event.timestamp, event.payload))
@@ -59,7 +61,8 @@ app.listen( port, () => {
 			embeds: [embed],
 		});
 	});
-	openseaClient.onEvents('boredapeyachtclub', allEvents, (event) => {
+	openseaClient.onEvents('boredapeyachtclub', allEvents, (event: any) => {
+		console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Bored Ape Yacht Club", event.item))
 			.setDescription(getMessage(event.item, "Bored Ape Yacht Club", event.event_type, event.timestamp, event.payload))
