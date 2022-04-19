@@ -1,7 +1,7 @@
 import { MessageEmbed, WebhookClient } from "discord.js";
 import * as express from 'express';
 import * as dotenv from "dotenv";
-import { OpenSeaPushClient, EventType } from '../local-dependencies/pushed-updates-sdk/src/index';
+import { OpenSeaPushClient, EventType } from '../local-dependencies/opensea-stream-js-sdk/src/index';
 import { WebSocket } from 'ws';
 import { getMessage, getTitle, getUrl } from './helpers';
 
