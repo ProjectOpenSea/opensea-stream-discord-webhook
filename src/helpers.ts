@@ -1,4 +1,4 @@
-import {EventType, ItemListedEventPayload, ItemCancelledEventPayload, ItemMetadataUpdatePayload, ItemSoldEventPayload, ItemTransferredEventPayload, ItemReceivedBidEventPayload, ItemReceivedOfferEventPayload} from '../local-dependencies/pushed-updates-sdk/src/index';
+import {EventType, ItemListedEventPayload, ItemCancelledEventPayload, ItemMetadataUpdatePayload, ItemSoldEventPayload, ItemTransferredEventPayload, ItemReceivedBidEventPayload, ItemReceivedOfferEventPayload} from '../local-dependencies/opensea-stream-js-sdk/src/index';
 
 type Item = {
 	token_id: string;

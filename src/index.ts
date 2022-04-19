@@ -1,7 +1,7 @@
 import { MessageEmbed, WebhookClient } from "discord.js";
 import * as express from 'express';
 import * as dotenv from "dotenv";
-import { OpenSeaPushClient, EventType } from '../local-dependencies/opensea-stream-js-sdk/src/index';
+import { OpenSeaStreamClient, EventType, LogLevel } from '../local-dependencies/opensea-stream-js-sdk/src/index';
 import { WebSocket } from 'ws';
 import { getMessage, getTitle, getUrl } from './helpers';
 
@@ -16,13 +16,14 @@ const openseaApiUrl = process.env.OPENSEA_API_URL || "";
 // Discord Webhook Client
 const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
 
-// OpenSea Push Client
-const openseaClient = new OpenSeaPushClient({
+// OpenSea Stream API Client
+const openseaClient = new OpenSeaStreamClient({
     token: openseaApiToken,
     apiUrl: openseaApiUrl,
     connectOptions: {
       transport: WebSocket
-    }
+    },
+	logLevel: LogLevel.DEBUG
   });
 
 
@@ -35,7 +36,7 @@ app.get("/", (req: express.Request, res: express.Response) => {
 const allEvents = Object.values(EventType);
 app.listen( port, () => {
 	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
-		console.log(event);
+		// console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Doodles", event.item))
 			.setDescription(getMessage(event.item, "Doodles", event.event_type, event.timestamp, event.payload))
@@ -48,21 +49,22 @@ app.listen( port, () => {
 		});
 	});
 
-	openseaClient.onEvents('neon-district-season-one-item', allEvents, (event: any) => {
-		console.log(event);
+	openseaClient.onEvents('aurory', allEvents, (event: any) => {
+		// console.log(event);
 		const embed = new MessageEmbed()
-			.setTitle(getTitle("Neon District", event.item))
+			.setTitle(getTitle("Aurory", event.item))
 			.setDescription(getMessage(event.item, "Neon District", event.event_type, event.timestamp, event.payload))
 			.setURL(getUrl(event.item))
-			.setColor('#C433F4');
+			.setColor('#61C7D7');
 		webhookClient.send({
-			username: 'NeonDistrictBot',
-			avatarURL: 'https://lh3.googleusercontent.com/xttZf6L3I16h7HSgcfKFWhR7OhCdSO5UW_asXbRfGmQ7-a0QwJRNoPsmh_RlOpw-AFEngLqGYLD77cmjdBv4LCfVc5BxFG2PS1UU=s130',
+			username: 'AuroryBots',
+			avatarURL: 'https://lh3.googleusercontent.com/Qzl6u460tNyzWFrlaLQIa2VMBc1HBX5X7IDfEYBbKV3q1p_BDVkqC-A7-DS5RA-IKagzD0m7J-LDpmr_XnY2ocsTcXGM01DXM7lqUg=s130',
 			embeds: [embed],
 		});
 	});
+
 	openseaClient.onEvents('boredapeyachtclub', allEvents, (event: any) => {
-		console.log(event);
+		// console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Bored Ape Yacht Club", event.item))
 			.setDescription(getMessage(event.item, "Bored Ape Yacht Club", event.event_type, event.timestamp, event.payload))
