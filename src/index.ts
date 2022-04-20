@@ -36,7 +36,6 @@ app.get("/", (req: express.Request, res: express.Response) => {
 const allEvents = Object.values(EventType);
 app.listen( port, () => {
 	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
-		// console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Doodles", event.item))
 			.setDescription(getMessage(event.item, "Doodles", event.event_type, event.timestamp, event.payload))
@@ -50,7 +49,6 @@ app.listen( port, () => {
 	});
 
 	openseaClient.onEvents('aurory', allEvents, (event: any) => {
-		// console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Aurory", event.item))
 			.setDescription(getMessage(event.item, "Neon District", event.event_type, event.timestamp, event.payload))
@@ -64,7 +62,6 @@ app.listen( port, () => {
 	});
 
 	openseaClient.onEvents('boredapeyachtclub', allEvents, (event: any) => {
-		// console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Bored Ape Yacht Club", event.item))
 			.setDescription(getMessage(event.item, "Bored Ape Yacht Club", event.event_type, event.timestamp, event.payload))
