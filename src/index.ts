@@ -36,19 +36,21 @@ app.get("/", (req: express.Request, res: express.Response) => {
 const allEvents = Object.values(EventType);
 app.listen( port, () => {
 	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
+		console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Doodles", event.item))
 			.setDescription(getMessage(event.item, "Doodles", event.event_type, event.timestamp, event.payload))
 			.setURL(getUrl(event.item))
 			.setColor('#FE9FDD');
 		webhookClient.send({
-			username: 'DoodleBot',
+			username: 'DoodleBot', 
 			avatarURL: 'https://lh3.googleusercontent.com/7B0qai02OdHA8P_EOVK672qUliyjQdQDGNrACxs7WnTgZAkJa_wWURnIFKeOh5VTf8cfTqW3wQpozGedaC9mteKphEOtztls02RlWQ=s130',
 			embeds: [embed],
 		});
 	});
 
 	openseaClient.onEvents('aurory', allEvents, (event: any) => {
+		console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Aurory", event.item))
 			.setDescription(getMessage(event.item, "Neon District", event.event_type, event.timestamp, event.payload))
@@ -62,9 +64,24 @@ app.listen( port, () => {
 	});
 
 	openseaClient.onEvents('boredapeyachtclub', allEvents, (event: any) => {
+		console.log(event);
 		const embed = new MessageEmbed()
 			.setTitle(getTitle("Bored Ape Yacht Club", event.item))
 			.setDescription(getMessage(event.item, "Bored Ape Yacht Club", event.event_type, event.timestamp, event.payload))
+			.setURL(getUrl(event.item))
+			.setColor('#EF972C');
+		webhookClient.send({
+			username: 'BoredApeBot',
+			avatarURL: 'https://lh3.googleusercontent.com/Ju9CkWtV-1Okvf45wo8UctR-M9He2PjILP0oOvxE89AyiPPGtrR3gysu1Zgy0hjd2xKIgjJJtWIc0ybj4Vd7wv8t3pxDGHoJBzDB=s130',
+			embeds: [embed],
+		});
+	});
+
+	openseaClient.onEvents('decentraland-polygon-wearables', allEvents, (event: any) => {
+		console.log(event);
+		const embed = new MessageEmbed()
+			.setTitle(getTitle("decentraland-polygon-wearables", event.item))
+			.setDescription(getMessage(event.item, "decentraland-polygon-wearables", event.event_type, event.timestamp, event.payload))
 			.setURL(getUrl(event.item))
 			.setColor('#EF972C');
 		webhookClient.send({
