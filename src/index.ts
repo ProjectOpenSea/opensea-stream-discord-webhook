@@ -8,6 +8,7 @@ import { getMessage, getTitle, getUrl } from './helpers';
 // Environment variables
 dotenv.config();
 const port = parseInt(process.env.PORT || '8080');
+const enabled = process.env.BOT_ENABLED || true;
 const webhookId = process.env.WEBHOOK_ID || "";
 const webhookToken = process.env.WEBHOOK_TOKEN || "";
 const openseaApiToken = process.env.OPENSEA_API_TOKEN || "";
@@ -31,10 +32,11 @@ const app: express.Express = express();
 
 app.get("/", (req: express.Request, res: express.Response) => {
 	res.send("Hello OpenSea Webhooks!");
-});
-
-const allEvents = Object.values(EventType);
-app.listen( port, () => {
+	if (!enabled) {
+		res.send("Bot is disabled");
+		return;
+	}
+	const allEvents = Object.values(EventType);
 	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
 		console.log(event);
 		const embed = new MessageEmbed()
@@ -90,4 +92,11 @@ app.listen( port, () => {
 			embeds: [embed],
 		});
 	});
-})
+});
+
+
+app.listen( port, () => {
+	console.log("Server is running...");
+});
+
+app.use(express.static("public"))

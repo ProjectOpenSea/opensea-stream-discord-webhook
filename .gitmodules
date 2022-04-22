@@ -1,3 +1,0 @@
-[submodule "local-dependencies/opensea-stream-js-sdk"]
-	path = local-dependencies/opensea-stream-js-sdk
-	url = https://github.com/ProjectOpenSea/opensea-stream-js-sdk
