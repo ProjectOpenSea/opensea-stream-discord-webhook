@@ -13,6 +13,7 @@ const webhookId = process.env.WEBHOOK_ID || "";
 const webhookToken = process.env.WEBHOOK_TOKEN || "";
 const openseaApiToken = process.env.OPENSEA_API_TOKEN || "";
 const openseaApiUrl = process.env.OPENSEA_API_URL || "";
+console.log(`Michael api url is ${openseaApiUrl}}`);
 
 // Discord Webhook Client
 const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
