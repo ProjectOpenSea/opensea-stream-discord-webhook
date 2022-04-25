@@ -14,28 +14,27 @@ const webhookToken = process.env.WEBHOOK_TOKEN || "";
 const openseaApiToken = process.env.OPENSEA_API_TOKEN || "";
 const openseaApiUrl = process.env.OPENSEA_API_URL || "";
 
-// Discord Webhook Client
-const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
-
-// OpenSea Stream API Client
-const openseaClient = new OpenSeaStreamClient({
-    token: openseaApiToken,
-    apiUrl: openseaApiUrl,
-    connectOptions: {
-      transport: WebSocket
-    },
-	logLevel: LogLevel.DEBUG
-  });
-
-
 const app: express.Express = express();
 
 app.get("/", (req: express.Request, res: express.Response) => {
 	res.send("Hello OpenSea Webhooks!");
-	if (!enabled) {
+	if (enabled !== "true") {
 		res.send("Bot is disabled");
 		return;
 	}
+	// Discord Webhook Client
+	const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
+
+	// OpenSea Stream API Client
+	const openseaClient = new OpenSeaStreamClient({
+		token: openseaApiToken,
+		apiUrl: openseaApiUrl,
+		connectOptions: {
+		transport: WebSocket
+		},
+		logLevel: LogLevel.DEBUG
+	});
+	openseaClient.connect();
 	const allEvents = Object.values(EventType);
 	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
 		console.log(event);
