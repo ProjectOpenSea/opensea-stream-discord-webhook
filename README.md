@@ -1,5 +1,5 @@
 # collection-events-discord-webhook
-A sample repo showing how a developer using the OpenSea Firehose API might be able to connect a Discord webhook to send messages whenever new events occur for a collection.
+A sample repo showing how a developer using the OpenSea Stream API might be able to connect a Discord webhook to send messages whenever new events occur for a collection.
 
 This particular codebase tracks all event types for 4 collections: Bored Ape Yacht Club, Aurory, Doodles, and Decentraland Wearables.
 
