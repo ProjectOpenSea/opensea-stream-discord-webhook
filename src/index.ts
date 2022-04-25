@@ -1,40 +1,106 @@
 import { MessageEmbed, WebhookClient } from "discord.js";
 import * as express from 'express';
 import * as dotenv from "dotenv";
+import * as path from 'path';
 import { OpenSeaStreamClient, EventType, LogLevel } from '../local-dependencies/opensea-stream-js-sdk/src/index';
 import { WebSocket } from 'ws';
 import { getMessage, getTitle, getUrl } from './helpers';
+import { getBotEnabled, setBotEnabled } from './redis';
+
 
 // Environment variables
 dotenv.config();
 const port = parseInt(process.env.PORT || '8080');
-const enabled = process.env.BOT_ENABLED || true;
 const webhookId = process.env.WEBHOOK_ID || "";
 const webhookToken = process.env.WEBHOOK_TOKEN || "";
 const openseaApiToken = process.env.OPENSEA_API_TOKEN || "";
 const openseaApiUrl = process.env.OPENSEA_API_URL || "";
+// Discord Webhook Client
+let webhookClient: WebhookClient;
+
+// OpenSea Stream API Client
+let openseaClient: OpenSeaStreamClient;
 
 const app: express.Express = express();
+app.use(express.static("public"));
+app.get("/toggleBot", async (req: express.Request, res: express.Response) => {
+	console.log("Toggling bot...");
+	const enabled = await getBotEnabled();
+	if (enabled) {
+		console.log("Bot enabled... disabling now...");
+		const success = await disableBot();
+		if (success) {
+			console.log("Disabled bot");
+			res.send({message: "Bot disabled", botEnabled: false});
+			return;
+		}
+		console.log("Failed while disabling bot");
+		res.send({message: "Failed while disabling bot", botEnabled: true});
+	} else {
+		console.log("Bot disabled... enabling now...");
+		const success = await enableBot();
+		if (success) {
+			console.log("Enabled bot");
+			res.send({message: "Bot enabled", botEnabled: true});
+			return;
+		}
+		console.log("Failed while enabling bot");
+		res.send({message: "Failed while enabling bot", botEnabled: false});
+	}
+});
+
+app.get("/botState", async (req: express.Request, res: express.Response) => {
+	console.log("Fetching bot state...");
+	const botEnabled = await getBotEnabled();
+	if (botEnabled) {
+		res.send({message: "Bot enabled", botEnabled: true});
+	} else{
+		// Set the value to disabled if the value was never found in cache
+		await setBotEnabled(false);
+		res.send({message: "Bot disabled", botEnabled: false});
+	}
+});
+
 
 app.get("/", (req: express.Request, res: express.Response) => {
-	res.send("Hello OpenSea Webhooks!");
-	if (enabled !== "true") {
-		res.send("Bot is disabled");
+	res.render(path.join(__dirname, 'index.html'), {message: 'Bot is disabled'});
+});
+
+app.listen( port, async () => {
+	console.log("Server is running...");
+	
+	// fetch redis key for whether bot is enabled or not
+	const enabled = await getBotEnabled();
+	if (!enabled) {
+		console.log("Bot is disabled");
 		return;
 	}
-	// Discord Webhook Client
-	const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
 
-	// OpenSea Stream API Client
-	const openseaClient = new OpenSeaStreamClient({
-		token: openseaApiToken,
-		apiUrl: openseaApiUrl,
-		connectOptions: {
-		transport: WebSocket
-		},
-		logLevel: LogLevel.DEBUG
-	});
-	openseaClient.connect();
+	const success = await enableBot();
+	if (!success) {
+		console.log("Bot was not enabled properly.");
+	}
+});
+
+const enableBot = async () => {
+
+	if (openseaClient == null) {
+		console.log("OpenSea client not properly set up");
+		openseaClient = new OpenSeaStreamClient({
+			token: openseaApiToken,
+			apiUrl: openseaApiUrl,
+			connectOptions: {
+			transport: WebSocket
+			},
+			logLevel: LogLevel.DEBUG
+		});
+	}
+
+	if (webhookClient == null) {
+		console.log("Discord client not properly set up");
+		webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
+	}
+
 	const allEvents = Object.values(EventType);
 	openseaClient.onEvents('doodles-official', allEvents, (event: any) => {
 		console.log(event);
@@ -91,11 +157,33 @@ app.get("/", (req: express.Request, res: express.Response) => {
 			embeds: [embed],
 		});
 	});
-});
 
+	setBotEnabled(true);
+	return true;
+};
 
-app.listen( port, () => {
-	console.log("Server is running...");
-});
+const disableBot = async () => {
+	const enabled = await getBotEnabled();
+	if (!enabled) {
+		console.log("Bot is already disabled");
+		return true;
+	}
+	if (openseaClient == null) {
+		return false;
+	}
 
-app.use(express.static("public"))
+	openseaClient.disconnect();
+	setBotEnabled(false);
+	return true;
+};
+
+const startUp = async () => {
+	const enabled = await getBotEnabled();
+	if (!enabled) {
+		await disableBot();
+	} else {
+		await enableBot();
+	}
+}
+
+startUp();

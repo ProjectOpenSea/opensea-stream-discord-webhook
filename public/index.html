@@ -2,11 +2,58 @@
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Alegreya|Source+Sans+Pro&display=swap" rel="stylesheet">
+	<link href="styles.css" rel="stylesheet">
+	<script>
+		function toggleBot() {
+			fetch("/toggleBot", {
+				method: 'get', 
+				headers : { 
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				}
+			})
+				.then(response => {
+					console.log(response);
+					return response.json();
+				})
+				.then(body => {
+					console.log(body);
+					document.getElementById('bot_enabled').innerHTML = body.message;
+					document.getElementById('bot_toggle').checked = body.botEnabled;
+				});
+		}
+		
+		function getInitialState() {
+			fetch("/botState", {
+				method: 'get', 
+				headers : { 
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				}
+			})
+				.then(response => {
+					console.log(response);
+					return response.json();
+				})
+				.then(body => {
+					console.log(body);
+					document.getElementById('bot_enabled').innerHTML = body.message;
+					document.getElementById('bot_toggle').checked = body.botEnabled;
+				});
+		}
+		
+		getInitialState();
+	</script>
 </head>
 <html>
 <body>
 <div>
 <h1>Howdy!</h1>
+<label class="switch">
+	<input id="bot_toggle" type="checkbox" onclick="toggleBot()">
+	<span class="slider round"></span>
+</label>
+<h2 id="bot_enabled">{{message}}</h2>
 </div>
 </body>
 </html>
