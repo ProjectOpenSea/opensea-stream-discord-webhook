@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ProjectOpenSea/collection-events-discord-webhook#readme",
   "dependencies": {
-    "@opensea/opensea-stream-js-sdk": "file:./local-dependencies/opensea-stream-js-sdk",
+    "@opensea/opensea-stream-js-sdk": "file:local-dependencies/opensea-stream-js-sdk",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
