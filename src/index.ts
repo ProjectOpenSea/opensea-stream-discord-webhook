@@ -45,25 +45,7 @@ app.get("/", (req: express.Request, res: express.Response) => {
     EventType.ITEM_RECEIVED_BID,
     EventType.ITEM_RECEIVED_OFFER,
   ];
-  const allEventsOther = [
-    EventType.ITEM_SOLD,
-    EventType.ITEM_LISTED,
-    EventType.ITEM_RECEIVED_BID,
-  ];
 
-  // openseaClient.onEvents('known-origin', allEvents, (event: BaseStreamMessage<unknown>) => {
-  // 	console.log(event);
-  // 	const embed = new MessageEmbed()
-  // 		.setTitle(getTitle("Aurory", event.payload.item))
-  // 		.setDescription(getMessage(event.payload.item, "Neon District", event.event_type, event.timestamp, event.payload))
-  // 		.setURL(getUrl(event.payload.item))
-  // 		.setColor('#61C7D7');
-  // 	webhookClient.send({
-  // 		username: 'AuroryBots',
-  // 		avatarURL: 'https://lh3.googleusercontent.com/Qzl6u460tNyzWFrlaLQIa2VMBc1HBX5X7IDfEYBbKV3q1p_BDVkqC-A7-DS5RA-IKagzD0m7J-LDpmr_XnY2ocsTcXGM01DXM7lqUg=s130',
-  // 		embeds: [embed],
-  // 	});
-  // });
   openseaClient.onEvents("boredapeyachtclub", allEvents, (event: any) => {
     console.log(event);
     console.log(event.payload.item.metadata);
@@ -76,7 +58,7 @@ app.get("/", (req: express.Request, res: express.Response) => {
 
   openseaClient.onEvents(
     "mutant-ape-yacht-club",
-    allEventsOther,
+    allEvents,
     (event: any) => {
       console.log(event);
       console.log(event.payload.item.metadata);
@@ -88,7 +70,7 @@ app.get("/", (req: express.Request, res: express.Response) => {
     }
   );
 
-  openseaClient.onEvents("otherdeed", allEventsOther, (event: any) => {
+  openseaClient.onEvents("otherdeed", allEvents, (event: any) => {
     console.log(event);
     console.log(event.payload.item.metadata);
     const embed = getMessageEmbed(event, "Otherdeed");
