@@ -1,10 +1,9 @@
 {
-	"include": ["./src/**/*.ts"],
-	"compilerOptions": {
-	  "target": "es5",
-	  "module": "commonjs",
-	  "outDir": "./dist",
-	  "strict": true
-	}
+  "include": ["./src/**/*.ts"],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true
   }
-  
+}
