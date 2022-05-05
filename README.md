@@ -2,7 +2,7 @@
 
 A sample repo showing how a developer using the OpenSea Stream API might be able to connect a Discord webhook to send messages whenever new events occur for a collection.
 
-This particular codebase tracks all event types for 4 collections: Bored Ape Yacht Club, Aurory, Doodles, and Decentraland Wearables.
+This particular codebase tracks all event types for the collections in the Yuga Labs world of NFTs: Bored Ape Yacht Club, Bored Ape Kennel Club, Mutant Ape Yacht Club, and Otherdeed.
 
 ## Setup
 
@@ -12,8 +12,13 @@ $ npm install
 
 Fill out the `.env` file with:
 
-- your OpenSea Stream API URL and API key
-- the Discord webhook ID and token for the Discord you would like to send messages to. TODO: Add instructions for how to get this.
+- Your OpenSea Stream API URL and API key, which you can request [here](https://docs.opensea.io/reference/request-an-api-key)
+- The Discord webhook ID and token for the Discord you would like to send messages to.
+ - To get a Discord webhook for your server, go to the channel you would like to add a webhook to and click the 'Edit Channel' button.
+ - Click on the Integrations tab and then Webhooks
+ - Click 'New Webhook' and give it a cool name + photo.
+ - Click on 'Copy Webhook URL'. This will give a URL of the format `https://discord.com/api/webhooks/{WEBHOOK_ID}/{WEBHOOK_TOKEN}`, which you can now use in your `.env` file.
+
 
 ## Running locally
 
