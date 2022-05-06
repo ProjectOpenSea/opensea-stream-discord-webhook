@@ -30,6 +30,8 @@ $ npm run dev
 
 To start a local dev server that tracks your local codebase and updates as you save changes. You can also run the server statically with `npm run build && npm run start`.
 
+After the server starts running, go to `localhost:PORT` in your browser to start the bot.
+
 ## Deploying
 
 ```bash
