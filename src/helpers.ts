@@ -23,7 +23,7 @@ export function getMessageEmbed(
 ): MessageEmbed {
   const embed = new MessageEmbed();
   switch (event.event_type) {
-    case EventType.ITEM_LISTED.valueOf():
+    case EventType.ITEM_LISTED:
       return setListingMessageEmbed(embed, event, collection_name);
     case EventType.ITEM_RECEIVED_OFFER:
       return setReceivedOfferMessageEmbed(embed, event, collection_name);
@@ -31,19 +31,8 @@ export function getMessageEmbed(
       return setReceivedBidMessageEmbed(embed, event, collection_name);
     case EventType.ITEM_SOLD:
       return setReceivedBidMessageEmbed(embed, event, collection_name);
-    // case EventType.ITEM_TRANSFERRED:
-    // 	return setReceivedBidMessageEmbed(embed, event, collection_name);
     default:
       return setBaseEmbed(embed, event);
-    // case EventType.ITEM_CANCELLED:
-    // 	createCancellationMessageEmbed(embed, event);
-    // 	break;
-    // case EventType.ITEM_METADATA_UPDATED:
-    // 	createMetadataUpdateMessageEmbed(embed, event);
-    // 	break;
-    // case EventType.ITEM_RECEIVED_BID:
-    // 	createReceivedBidMessageEmbed(embed, event);
-    // 	break;
   }
 }
 
