@@ -15,6 +15,8 @@ import {
   ItemReceivedOfferEvent,
   ItemReceivedBidEvent,
   ItemSoldEvent,
+  ItemTransferredEvent,
+  ItemCancelledEvent,
 } from "@opensea/stream-js";
 
 export function getMessageEmbed(
@@ -30,7 +32,11 @@ export function getMessageEmbed(
     case EventType.ITEM_RECEIVED_BID:
       return setReceivedBidMessageEmbed(embed, event, collection_name);
     case EventType.ITEM_SOLD:
-      return setReceivedBidMessageEmbed(embed, event, collection_name);
+      return setSaleMessageEmbed(embed, event, collection_name);
+    case EventType.ITEM_TRANSFERRED:
+      return setTransferMessageEmber(embed, event, collection_name);
+    case EventType.ITEM_CANCELLED:  
+        return setCancelledMessageEmber(embed, event, collection_name);
     default:
       return setBaseEmbed(embed, event);
   }
@@ -51,14 +57,20 @@ export function setListingMessageEmbed(
   collection_name: string
 ): MessageEmbed {
   embed = setBaseEmbed(embed, event);
-  embed.setAuthor(getListingTitle(event, collection_name));
+  let prefix = event.payload.is_private ? "Private " : "";
+  if (event.payload.listing_type === "dutch") {
+    prefix = "Dutch Auction ";
+  } else if (event.payload.listing_type === "english") {
+    prefix = "English Auction ";
+  }
+  embed.setAuthor(getTitle(event, collection_name, `${prefix}Listing Created`));
   embed.setDescription(
     getNameLine(event.payload, collection_name) +
       getOwnerLine(event.payload) +
       getWinnerLine(event.payload)
   );
   embed = setListingPrice(embed, event.payload);
-  embed.setColor("GREEN");
+  embed.setColor("AQUA");
   return embed;
 }
 
@@ -68,7 +80,7 @@ export function setReceivedOfferMessageEmbed(
   collection_name: string
 ): MessageEmbed {
   embed = setBaseEmbed(embed, event);
-  embed.setAuthor(getOfferTitle(event, collection_name));
+  embed.setAuthor(getTitle(event, collection_name, "Offer"));
   embed.setDescription(
     getNameLine(event.payload, collection_name) +
       getOwnerLine(event.payload) +
@@ -85,7 +97,7 @@ export function setReceivedBidMessageEmbed(
   collection_name: string
 ): MessageEmbed {
   embed = setBaseEmbed(embed, event);
-  embed.setAuthor(getBidTitle(event, collection_name));
+  embed.setAuthor(getTitle(event, collection_name, "Bid"));
   embed.setDescription(
     getNameLine(event.payload, collection_name) +
       getOwnerLine(event.payload) +
@@ -102,14 +114,45 @@ export function setSaleMessageEmbed(
   collection_name: string
 ): MessageEmbed {
   embed = setBaseEmbed(embed, event);
-  embed.setAuthor(getSaleTitle(event, collection_name));
+  embed.setAuthor(getTitle(event, collection_name, "Sold"));
   embed.setDescription(
     getNameLine(event.payload, collection_name) +
       getOwnerLine(event.payload) +
       getWinnerLine(event.payload)
   );
   embed = setSalePrice(embed, event.payload);
-  embed.setColor("NAVY");
+  embed.setColor("GREEN");
+  return embed;
+}
+
+export function setTransferMessageEmber(
+  embed: MessageEmbed,
+  event: ItemTransferredEvent,
+  collection_name: string
+): MessageEmbed {
+  embed = setBaseEmbed(embed, event);
+  embed.setAuthor(getTitle(event, collection_name, "Transferred"));
+  embed.setDescription(
+    getNameLine(event.payload, collection_name) +
+      getFromLine(event.payload) +
+      getToLine(event.payload)
+  );
+  embed.setColor("RED");
+  return embed;
+}
+
+export function setCancelledMessageEmber(
+  embed: MessageEmbed,
+  event: ItemCancelledEvent,
+  collection_name: string
+): MessageEmbed {
+  embed = setBaseEmbed(embed, event);
+  const suffix = event.payload.listing_type != null? ` ${event.payload.listing_type}` : "";
+  embed.setAuthor(getTitle(event, collection_name, `Cancelled${suffix}`));
+  embed.setDescription(
+    getNameLine(event.payload, collection_name)
+  );
+  embed.setColor("FUCHSIA");
   return embed;
 }
 
@@ -141,34 +184,11 @@ function setOfferPrice(
   return embed;
 }
 
-function getOfferTitle(
-  event: ItemReceivedOfferEvent,
-  collection_name: string
-): EmbedAuthorData {
+function getTitle(event: BaseStreamMessage<any>, collection_name: string, prefix: string): EmbedAuthorData {
   return {
-    name: `Offer: ${getItemName(event.payload, collection_name)}`,
+    name: `${prefix}: ${getItemName(event.payload, collection_name)}`,
     url: getUrl(event.payload.item),
-  };
-}
-
-function getBidTitle(
-  event: ItemReceivedBidEvent,
-  collection_name: string
-): EmbedAuthorData {
-  return {
-    name: `Bid: ${getItemName(event.payload, collection_name)}`,
-    url: getUrl(event.payload.item),
-  };
-}
-
-function getSaleTitle(
-  event: ItemSoldEvent,
-  collection_name: string
-): EmbedAuthorData {
-  return {
-    name: `Sold: ${getItemName(event.payload, collection_name)}`,
-    url: getUrl(event.payload.item),
-  };
+  }
 }
 
 function setSalePrice(
@@ -183,22 +203,6 @@ function setSalePrice(
     )} USD`
   );
   return embed;
-}
-
-function getListingTitle(
-  event: ItemListedEvent,
-  collection_name: string
-): EmbedAuthorData {
-  let prefix = event.payload.is_private ? "Private " : "";
-  if (event.payload.listing_type === "dutch") {
-    prefix = "Dutch Auction ";
-  } else if (event.payload.listing_type === "english") {
-    prefix = "English Auction ";
-  }
-  return {
-    name: `${prefix}Listing: ${getItemName(event.payload, collection_name)}`,
-    url: getUrl(event.payload.item),
-  };
 }
 
 function getNameLine(payload: Payload, collection_name: string): string {
@@ -227,6 +231,22 @@ function getWinnerLine(
     | ItemReceivedOfferEventPayload
 ): string {
   return payload.taker == null ? "" : `**Winner:** ${payload.taker.address}\n`;
+}
+
+function getFromLine(
+  payload: ItemTransferredEventPayload
+): string {
+  return `**From:** ${
+    payload.from_account == null ? "None" : payload.from_account.address
+  }\n`;
+}
+
+function getToLine(
+  payload: ItemTransferredEventPayload
+): string {
+  return `**To:** ${
+    payload.to_account == null ? "None" : payload.to_account.address
+  }\n`;
 }
 
 function getDescription(payload: ItemMetadataUpdatePayload): string {
