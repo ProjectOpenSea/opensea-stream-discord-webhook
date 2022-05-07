@@ -8,7 +8,7 @@ import {
   Network,
 } from "@opensea/stream-js";
 import { WebSocket } from "ws";
-import { getMessageEmbed, setListingMessageEmbed } from "./helpers";
+import { getMessageEmbed } from "./helpers";
 
 // Environment variables
 dotenv.config();
@@ -40,53 +40,24 @@ app.get("/", (req: express.Request, res: express.Response) => {
     return;
   }
   const allEvents = [
-    EventType.ITEM_SOLD,
+    EventType.ITEM_CANCELLED,
     EventType.ITEM_LISTED,
     EventType.ITEM_RECEIVED_BID,
     EventType.ITEM_RECEIVED_OFFER,
+    EventType.ITEM_SOLD,
+    EventType.ITEM_TRANSFERRED,
   ];
 
-  openseaClient.onEvents("boredapeyachtclub", allEvents, (event: any) => {
-    console.log(event);
-    console.log(event.payload.item.metadata);
-    const embed = getMessageEmbed(event, "Bored Ape Yacht Club");
-    webhookClient.send({
-      username: "OpenSeaBot",
-      embeds: [embed],
-    });
-  });
-
-  openseaClient.onEvents(
-    "mutant-ape-yacht-club",
-    allEvents,
-    (event: any) => {
+  const collection_slugs = process.env.COLLECTION_SLUGS?.split(" ") || [];
+  collection_slugs.forEach(slug => {
+    openseaClient.onEvents(slug, allEvents, (event: any) => {
       console.log(event);
       console.log(event.payload.item.metadata);
-      const embed = getMessageEmbed(event, "Mutant Ape Yacht Club");
+      const embed = getMessageEmbed(event, slug.replace("-", " ").replace("_", " "));
       webhookClient.send({
         username: "OpenSeaBot",
         embeds: [embed],
       });
-    }
-  );
-
-  openseaClient.onEvents("otherdeed", allEvents, (event: any) => {
-    console.log(event);
-    console.log(event.payload.item.metadata);
-    const embed = getMessageEmbed(event, "Otherdeed");
-    webhookClient.send({
-      username: "OpenSeaBot",
-      embeds: [embed],
-    });
-  });
-
-  openseaClient.onEvents("bored-ape-kennel-club", allEvents, (event: any) => {
-    console.log(event);
-    console.log(event.payload.item.metadata);
-    const embed = getMessageEmbed(event, "Bored Ape Kennel Club");
-    webhookClient.send({
-      username: "OpenSeaBot",
-      embeds: [embed],
     });
   });
 });

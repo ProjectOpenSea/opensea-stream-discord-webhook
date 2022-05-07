@@ -18,6 +18,8 @@ Fill out the `.env` file with:
  - Click on the Integrations tab and then Webhooks
  - Click 'New Webhook' and give it a cool name + photo.
  - Click on 'Copy Webhook URL'. This will give a URL of the format `https://discord.com/api/webhooks/{WEBHOOK_ID}/{WEBHOOK_TOKEN}`, which you can now use in your `.env` file.
+- A list of collection slugs you would like to track events for, split with a space. To track all collections, use '*'.
+ - e.g. `COLLECTION_SLUGS="boredapeyachtclub mutant-ape-yacht-club otherdeed bored-ape-kennel-club"`
 
 
 ## Running locally
