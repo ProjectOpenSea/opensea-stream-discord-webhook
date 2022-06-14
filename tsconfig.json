@@ -6,9 +6,6 @@
     "outDir": "./dist/src",
     "strict": true,
     "baseUrl": ".",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ]
+    "typeRoots": ["./node_modules/@types", "./types"]
   }
 }

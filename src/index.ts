@@ -18,13 +18,19 @@ const webhookId = process.env.WEBHOOK_ID || "";
 const webhookToken = process.env.WEBHOOK_TOKEN || "";
 const openseaApiToken = process.env.OPENSEA_API_TOKEN || "";
 
+const openseaNetwork =
+  process.env.NETWORK &&
+  Object.values(Network).some((v) => v === process.env.NETWORK)
+    ? (process.env.NETWORK as Network)
+    : Network.MAINNET;
+
 // Discord Webhook Client
 const webhookClient = new WebhookClient({ id: webhookId, token: webhookToken });
 
 // OpenSea Stream API Client
 const openseaClient = new OpenSeaStreamClient({
   token: openseaApiToken,
-  network: Network.MAINNET,
+  network: openseaNetwork,
   connectOptions: {
     transport: WebSocket,
   },
@@ -49,11 +55,14 @@ app.get("/", (req: express.Request, res: express.Response) => {
   ];
 
   const collection_slugs = process.env.COLLECTION_SLUGS?.split(" ") || [];
-  collection_slugs.forEach(slug => {
+  collection_slugs.forEach((slug) => {
     openseaClient.onEvents(slug, allEvents, (event: any) => {
       console.log(event);
       console.log(event.payload.item.metadata);
-      const embed = getMessageEmbed(event, slug.replace("-", " ").replace("_", " "));
+      const embed = getMessageEmbed(
+        event,
+        slug.replace("-", " ").replace("_", " ")
+      );
       webhookClient.send({
         username: "OpenSeaBot",
         embeds: [embed],
