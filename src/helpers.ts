@@ -35,8 +35,8 @@ export function getMessageEmbed(
       return setSaleMessageEmbed(embed, event, collection_name);
     case EventType.ITEM_TRANSFERRED:
       return setTransferMessageEmber(embed, event, collection_name);
-    case EventType.ITEM_CANCELLED:  
-        return setCancelledMessageEmber(embed, event, collection_name);
+    case EventType.ITEM_CANCELLED:
+      return setCancelledMessageEmber(embed, event, collection_name);
     default:
       return setBaseEmbed(embed, event);
   }
@@ -147,11 +147,10 @@ export function setCancelledMessageEmber(
   collection_name: string
 ): MessageEmbed {
   embed = setBaseEmbed(embed, event);
-  const suffix = event.payload.listing_type != null? ` ${event.payload.listing_type}` : "";
+  const suffix =
+    event.payload.listing_type != null ? ` ${event.payload.listing_type}` : "";
   embed.setAuthor(getTitle(event, collection_name, `Cancelled${suffix}`));
-  embed.setDescription(
-    getNameLine(event.payload, collection_name)
-  );
+  embed.setDescription(getNameLine(event.payload, collection_name));
   embed.setColor("FUCHSIA");
   return embed;
 }
@@ -184,11 +183,15 @@ function setOfferPrice(
   return embed;
 }
 
-function getTitle(event: BaseStreamMessage<any>, collection_name: string, prefix: string): EmbedAuthorData {
+function getTitle(
+  event: BaseStreamMessage<any>,
+  collection_name: string,
+  prefix: string
+): EmbedAuthorData {
   return {
     name: `${prefix}: ${getItemName(event.payload, collection_name)}`,
     url: getUrl(event.payload.item),
-  }
+  };
 }
 
 function setSalePrice(
@@ -233,17 +236,13 @@ function getWinnerLine(
   return payload.taker == null ? "" : `**Winner:** ${payload.taker.address}\n`;
 }
 
-function getFromLine(
-  payload: ItemTransferredEventPayload
-): string {
+function getFromLine(payload: ItemTransferredEventPayload): string {
   return `**From:** ${
     payload.from_account == null ? "None" : payload.from_account.address
   }\n`;
 }
 
-function getToLine(
-  payload: ItemTransferredEventPayload
-): string {
+function getToLine(payload: ItemTransferredEventPayload): string {
   return `**To:** ${
     payload.to_account == null ? "None" : payload.to_account.address
   }\n`;
